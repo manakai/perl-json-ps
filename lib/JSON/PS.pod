@@ -133,7 +133,13 @@ U+10FFFF, the JSON string also contains the character (which is
 non-conforming).  If the output is a byte string, however, the
 character is converted to U+FFFD when it is converted to bytes.
 
-There is not way to generate JSON C<true> or C<false>.
+It prefers code point escapes to one-character escapes, which is
+different from ECMAScript's C<JSON.stringify>.  It escapes more
+characters than ECMAScript: C<">, C<\> C<+>, C<< < >>, C0 and C1
+control characters, C<DELETE>, U+2028, U+2029, noncharacter code
+points, and surrogate code points.
+
+There is no way to generate JSON C<true> or C<false>.
 
 =head1 COMPARISON WITH SIMILAR MODULES
 
