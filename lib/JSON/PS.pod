@@ -1,0 +1,181 @@
+=head1 NAME
+
+JSON::PS - A JSON parser and serializer
+
+=head1 SYNOPSIS
+
+  use JSON::PS;
+  $json = perl2json_bytes $perl;
+  $perl = json_bytes2perl $json;
+
+=head1 DESCRIPTION
+
+The C<JSON::PS> module provides JSON parser and serializer functions.
+
+=head1 FUNCTIONS
+
+Following functions are exported by default, or can be exported by
+enumerating them as argument to the C<use> statement:
+
+=over 4
+
+=item $perl = json_bytes2perl $json
+
+Decode the argument as a UTF-8 encoded JSON byte sequence and return
+the Perl data structure corresponding to it.  Return C<undef> if
+failed.
+
+=item $perl = json_chars2perl $json
+
+Decode the argument as a JSON character sequence and return the Perl
+data structure corresponding to it.  Return C<undef> if failed.
+
+=item $json = perl2json_bytes $perl
+
+Encode the argument as a UTF-8 encoded JSON byte sequence and return
+the result.
+
+=item $json = perl2json_chars $perl
+
+Encode the argument as a JSON character sequence and return the
+result.
+
+=item $json = perl2json_bytes_for_record $perl
+
+Encode the argument as a UTF-8 encoded pretty-printed JSON byte
+sequence and return the result.
+
+=item $json = perl2json_chars_for_record $perl
+
+Encode the argument as a pretty-printed JSON character sequence and
+return the result.
+
+=back
+
+In addition, following function can be exported by explicitly
+specifying the name to the argument to the C<use> statement:
+
+=over 4
+
+=item $perl = file2perl $slurpable
+
+Decode the content of the specified file as a UTF-8 encoded JSON byte
+sequence and return the Perl data structure corresponding to it.
+Throw if it can't open the file and retrieve the content.  Return
+C<undef> if JSON decoding failed.
+
+The argument must be an instance of L<Path::Class::File> or
+L<Path::Tiny> representing the file.
+
+=back
+
+=head1 SPECIFICATION
+
+=over 4
+
+=item JSON
+
+ECMA-404 The JSON Data Interchange Format
+<http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf>.
+
+=back
+
+=head1 MAPPING BETWEEN JSON AND PERL
+
+This module adopts simplest possible mapping from JSON to Perl and
+vice versa.  It is not a goal of the module to provide a complete
+mapping between every possible JSON and Perl values.
+
+=head2 JSON to Perl
+
+JSON C<null> is mapped to Perl C<undef>.
+
+JSON C<true> is mapped to Perl C<1>.
+
+JSON C<false> is mapped to Perl C<0>.
+
+JSON numbers are mapped to Perl scalar values with same numeric value.
+Numbers can overflow or underflow.
+
+JSON strings are mapped to Perl scalar values with same string value.
+If the input JSON data is a Perl character string, the output can
+contain characters greater than U+10FFFF.
+
+JSON arrays are mapped to Perl array references.  JSON array items are
+used as Perl array items.
+
+JSON objects are mapped to Perl hash references.  JSON names and
+values are used as hash keys and values.  Order of them are not
+preserved in Perl.  If there are multiple values with same name, the
+later value is used as the value in the hash.
+
+This module has no restriction on length of string and number of items
+in array or object.
+
+=head2 Perl to JSON
+
+If an object with C<TO_JSON> method is given, the method is invoked
+and the result is used.  It is expected to return a non-object scalar
+value and not to throw any exception.
+
+Perl hash references are mapped to JSON objects.  Hash keys and values
+are used as JSON names and values.  Order of JSON names are not
+considered as significant upon serialization.
+
+Perl array references are mapped to JSON arrays.  Perl array items are
+used as JSON array items.
+
+Any other Perl scalar value is mapped to JSON number or string.  If
+the value has numeric value and is not C<inf>, C<-inf>, or C<nan>, it
+is mapped to equivalent JSON number.  Otherwise, it is mapped to
+equivalent JSON string.  If there is a character greater than
+U+10FFFF, the JSON string also contains the character (which is
+non-conforming).  If the output is a byte string, however, the
+character is converted to U+FFFD when it is converted to bytes.
+
+There is not way to generate JSON C<true> or C<false>.
+
+=head1 COMPARISON WITH SIMILAR MODULES
+
+If performance is important for your application, use L<JSON::XS>.  If
+you don't like XS, use L<JSON::Tiny>.
+
+If you have to support some non-standard extension to JSON syntax,
+write your own parser or serializer.
+
+API of this module is same as L<JSON::Functions::XS>
+<https://github.com/wakaba/perl-json-functions-xs>, a function-based
+API wrapper for L<JSON::XS>.
+
+=head1 DEPENDENCY
+
+The module requires Perl 5.8 or later.  It also requires L<B>,
+L<Carp>, and L<Encode> (all of them are core modules).
+
+Tests require some more modules, but they are not required by the
+module itself.
+
+=head1 DEVELOPMENT
+
+Latest version of the module is available in the Git repository
+<https://github.com/wakaba/perl-json-ps>.
+
+You should add the Git repository as a submodule of the Git repository
+of your application, or copy the module file
+<https://raw.githubusercontent.com/wakaba/perl-json-ps/master/lib/JSON/PS.pm>.
+
+Tests are run at Travis CI:
+<https://travis-ci.org/wakaba/perl-json-ps>.
+
+=head1 AUTHOR
+
+Wakaba <wakaba@suikawiki.org>.
+
+=head1 LICENSE
+
+Copyright 2014 Wakaba <wakaba@suikawiki.org>.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
