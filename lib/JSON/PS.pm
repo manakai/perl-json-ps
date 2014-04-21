@@ -4,9 +4,22 @@ use warnings;
 no warnings 'utf8';
 use warnings FATAL => 'recursion';
 our $VERSION = '1.0';
+use B;
+use Carp;
 use Encode ();
 
 our @EXPORT;
+
+sub import ($;@) {
+  my $from_class = shift;
+  my ($to_class, $file, $line) = caller;
+  no strict 'refs';
+  for (@_ ? @_ : @{$from_class . '::EXPORT'}) {
+    my $code = $from_class->can ($_)
+        or croak qq{"$_" is not exported by the $from_class module at $file line $line};
+    *{$to_class . '::' . $_} = $code;
+  }
+} # import
 
 my $EscapeToChar = {
   '"' => q<">,
@@ -122,6 +135,106 @@ sub json_chars2perl ($) {
   local $@;
   return eval { _decode $_[0] };
 } # json_chars2perl
+
+my $StringNonSafe = qr/[\x00-\x1F\x22\x5C\x2B\x3C\x7F-\x9F\x{D800}-\x{DFFF}\x{FDD0}-\x{FDEF}\x{FFFE}-\x{FFFF}\x{1FFFE}-\x{1FFFF}\x{2FFFE}-\x{2FFFF}\x{3FFFE}-\x{3FFFF}\x{4FFFE}-\x{4FFFF}\x{5FFFE}-\x{5FFFF}\x{6FFFE}-\x{6FFFF}\x{7FFFE}-\x{7FFFF}\x{8FFFE}-\x{8FFFF}\x{9FFFE}-\x{9FFFF}\x{AFFFE}-\x{AFFFF}\x{BFFFE}-\x{BFFFF}\x{CFFFE}-\x{CFFFF}\x{DFFFE}-\x{DFFFF}\x{EFFFE}-\x{EFFFF}\x{FFFFE}-\x{FFFFF}\x{10FFFE}-\x{10FFFF}]/;
+
+our $Symbols = {
+  LBRACE => '{',
+  RBRACE => '}',
+  LBRACKET => '[',
+  RBRACKET => ']',
+  COLON => ':',
+  COMMA => ',',
+  indent => '',
+  last => '',
+  sort => 0,
+};
+my $PrettySymbols = {
+  LBRACE => "{\x0A",
+  RBRACE => '}',
+  LBRACKET => "[\x0A",
+  RBRACKET => ']',
+  COLON => ' : ',
+  COMMA => ",\x0A",
+  indent => '   ',
+  last => "\x0A",
+  sort => 1,
+};
+
+sub _encode_value ($$);
+sub _encode_value ($$) {
+  if (defined $_[0]) {
+    if (my $ref = ref $_[0]) {
+      if (UNIVERSAL::can ($_[0], 'TO_JSON')) {
+        return _encode_value $_[0]->TO_JSON, $_[1];
+      }
+
+      if ($ref eq 'ARRAY') {
+        my $indent = $_[1].$Symbols->{indent};
+        my @v = map { $indent, (_encode_value $_, $indent), $Symbols->{COMMA} } @{$_[0]};
+        $v[-1] = $Symbols->{last} if @v;
+        return $Symbols->{LBRACKET}, @v, $_[1], $Symbols->{RBRACKET};
+      }
+
+      if ($ref eq 'HASH') {
+        my $indent = $_[1].$Symbols->{indent};
+        my @key = keys %{$_[0]};
+        @key = sort { $a cmp $b } @key if $Symbols->{sort};
+        my @v = map {
+          if ($_ =~ /$StringNonSafe/o) {
+            my $v = $_;
+            $v =~ s/($StringNonSafe)/sprintf '\\u%04X', ord $1/geo; # XXX surrogate
+            $indent, '"', $v, '"', $Symbols->{COLON}, _encode_value ($_[0]->{$_}, $indent), $Symbols->{COMMA};
+          } else {
+            $indent, '"', $_, '"', $Symbols->{COLON}, _encode_value ($_[0]->{$_}, $indent), $Symbols->{COMMA};
+          }
+        } @key;
+        $v[-1] = $Symbols->{last} if @v;
+        return $Symbols->{LBRACE}, @v, $_[1], $Symbols->{RBRACE};
+      }
+    }
+
+    my $f = B::svref_2object (\($_[0]))->FLAGS;
+    if ($f & (B::SVp_IOK | B::SVp_NOK) && $_[0] * 0 == 0) {
+      my $n = 0 + $_[0];
+      if ($n =~ /\A(-?(?>[1-9][0-9]*|0)(?>\.[0-9]+)?(?>[eE][+-]?[0-9]+)?)\z/) {
+        return $n;
+      }
+    }
+
+    if ($_[0] =~ /$StringNonSafe/o) {
+      my $v = $_[0];
+      $v =~ s/($StringNonSafe)/sprintf '\\u%04X', ord $1/geo; # XXX surrogate
+      return '"', $v, '"';
+    } else {
+      return '"', $_[0], '"';
+    }
+  } else {
+    return 'null';
+  }
+} # _encode_value
+
+push @EXPORT, qw(perl2json_bytes);
+sub perl2json_bytes ($) {
+  return Encode::encode 'utf-8', join '', _encode_value $_[0], '';
+} # perl2json_bytes
+
+push @EXPORT, qw(perl2json_chars);
+sub perl2json_chars ($) {
+  return join '', _encode_value $_[0], '';
+} # perl2json_chars
+
+push @EXPORT, qw(perl2json_bytes_for_record);
+sub perl2json_bytes_for_record ($) {
+  local $Symbols = $PrettySymbols;
+  return Encode::encode 'utf-8', join '', _encode_value ($_[0], ''), "\x0A";
+} # perl2json_bytes_for_record
+
+push @EXPORT, qw(perl2json_chars_for_record);
+sub perl2json_chars_for_record ($) {
+  local $Symbols = $PrettySymbols;
+  return join '', _encode_value ($_[0], ''), "\x0A";
+} # perl2json_chars_for_record
 
 1;
 

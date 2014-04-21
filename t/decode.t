@@ -56,14 +56,14 @@ for my $test (
 ) {
   test {
     my $c = shift;
-    my $result = JSON::PS::json_bytes2perl $test->[0];
+    my $result = json_bytes2perl $test->[0];
     eq_or_diff $result, $test->[1];
     done $c;
   } n => 1;
 
   test {
     my $c = shift;
-    my $result = JSON::PS::json_chars2perl $test->[0];
+    my $result = json_chars2perl $test->[0];
     eq_or_diff $result, defined $test->[2] ? $test->[2] : $test->[1];
     done $c;
   } n => 1;
