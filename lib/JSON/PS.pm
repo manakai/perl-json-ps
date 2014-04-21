@@ -49,9 +49,10 @@ sub _decode_value ($) {
         push @s, $1;
       } elsif ($_[0] =~ m{\G\\(["\\/bfnrt])}gc) {
         push @s, $EscapeToChar->{$1};
+      } elsif ($_[0] =~ /\G\\u([Dd][89ABab][0-9A-Fa-f]{2})\\u([Dd][C-Fc-f][0-9A-Fa-f]{2})/gc) {
+        push @s, chr (0x10000 + ((hex ($1) - 0xD800) << 10) + (hex ($2) - 0xDC00));
       } elsif ($_[0] =~ /\G\\u([0-9A-Fa-f]{4})/gc) {
         push @s, chr hex $1;
-# XXX surrogate
       } elsif ($_[0] =~ /\G"/gc) {
         last;
       } else {
@@ -118,6 +119,7 @@ sub _decode_value ($) {
 
 sub _decode ($) {
   return undef unless defined $_[0];
+  pos ($_[0]) = 0;
   $_[0] =~ /\G[\x09\x0A\x0D\x20]+/gc;
   my $result = _decode_value $_[0];
   $_[0] =~ /\G[\x09\x0A\x0D\x20]+/gc;
@@ -185,7 +187,16 @@ sub _encode_value ($$) {
         my @v = map {
           if ($_ =~ /$StringNonSafe/o) {
             my $v = $_;
-            $v =~ s/($StringNonSafe)/sprintf '\\u%04X', ord $1/geo; # XXX surrogate
+            $v =~ s{($StringNonSafe)}{
+              my $c = ord $1;
+              if ($c >= 0x10000) {
+                sprintf '\\u%04X\\u%04X',
+                    (($c - 0x10000) >> 10) + 0xD800,
+                    (($c - 0x10000) & 0x3FF) + 0xDC00;
+              } else {
+                sprintf '\\u%04X', $c;
+              }
+            }geo;
             $indent, '"', $v, '"', $Symbols->{COLON}, _encode_value ($_[0]->{$_}, $indent), $Symbols->{COMMA};
           } else {
             $indent, '"', $_, '"', $Symbols->{COLON}, _encode_value ($_[0]->{$_}, $indent), $Symbols->{COMMA};
@@ -206,7 +217,16 @@ sub _encode_value ($$) {
 
     if ($_[0] =~ /$StringNonSafe/o) {
       my $v = $_[0];
-      $v =~ s/($StringNonSafe)/sprintf '\\u%04X', ord $1/geo; # XXX surrogate
+      $v =~ s{($StringNonSafe)}{
+        my $c = ord $1;
+        if ($c >= 0x10000) {
+          sprintf '\\u%04X\\u%04X',
+              (($c - 0x10000) >> 10) + 0xD800,
+              (($c - 0x10000) & 0x3FF) + 0xDC00;
+        } else {
+          sprintf '\\u%04X', $c;
+        }
+      }geo;
       return '"', $v, '"';
     } else {
       return '"', $_[0], '"';

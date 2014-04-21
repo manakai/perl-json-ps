@@ -36,6 +36,12 @@ for my $test (
   [qq{" \\t\\u4E00\\uFFFF\\uD800"} => " \x09\x{4E00}\x{FFFF}\x{D800}"],
   [u8 qq{" \\t\x{4E00}\x{FFFC}"} => " \x09\x{4E00}\x{FFFC}", " \x09\xe4\xb8\x80\xef\xbf\xbc"],
   [qq{" \\n\\r\\b\\f\\"\\\\\\/"} => " \x0A\x0D\x08\x0C\"\\/"],
+  [qq{"\\uD83F\\uDFFF\\uDBFF\\uDFFF"}, "\x{1FFFF}\x{10FFFF}"],
+  [qq{{"\\uD83F\\uDFFF\\uDBFF\\uDFFF":"\\uD800\\uDC00"}}, {"\x{1FFFF}\x{10FFFF}" => "\x{10000}"}],
+  [qq{"\\uD83F"}, "\x{D83F}"],
+  [qq{"\\uD83F\x{DFFF}"}, "\x{D83F}\x{DFFF}"],
+  [qq{"\\uD83F\x{DFFF}\x{DBFF}"}, "\x{D83F}\x{DFFF}\x{DBFF}"],
+  [qq{"\\uD83F\x{DFFF}\x{DBFF}\\uDFFF"}, "\x{D83F}\x{DFFF}\x{DBFF}\x{DFFF}"],
 
   [q{[]} => []],
   [q{[  ]} => []],
@@ -59,7 +65,7 @@ for my $test (
     my $result = json_bytes2perl $test->[0];
     eq_or_diff $result, $test->[1];
     done $c;
-  } n => 1;
+  } n => 1, name => ['json_bytes2perl'];
 
   test {
     my $c = shift;
