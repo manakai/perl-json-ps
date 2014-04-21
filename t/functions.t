@@ -479,4 +479,24 @@ test {
   done $c;
 } n => 1;
 
+# ------ file2perl ------
+
+test {
+  my $c = shift;
+  my $file = path (__FILE__)->parent->child ('abc.json');
+  eq_or_diff JSON::PS::file2perl $file, {abc => "\x{4E00}"};
+  done $c;
+} n => 1;
+
 run_tests;
+
+=head1 LICENSE
+
+Copyright 2009-2011 Hatena <http://www.hatena.ne.jp/>.
+
+Copyright 2012-2014 Wakaba <wakaba@suikawiki.org>.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut

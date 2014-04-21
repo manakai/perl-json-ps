@@ -238,6 +238,11 @@ sub perl2json_chars_for_record ($) {
   return scalar join '', _encode_value ($_[0], ''), "\x0A";
 } # perl2json_chars_for_record
 
+#push @EXPORT_OK, qw(file2perl);
+sub file2perl ($) {
+  return json_chars2perl Encode::decode 'utf-8', scalar $_[0]->slurp;
+} # file2perl
+
 1;
 
 =head1 LICENSE
