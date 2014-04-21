@@ -1,0 +1,12 @@
+Scalar::Util~1.38
+AnyEvent~7.07
+Term::ANSIColor~4.03
+File::Spec~3.40
+Encode~2.59
+Carp~1.3301
+Test::More~1.001003
+Text::Diff~1.41
+Filter::Util::Call~1.49
+Test::Differences~0.61
+Algorithm::Diff~1.1902
+Path::Tiny~0.052

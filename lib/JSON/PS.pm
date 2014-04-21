@@ -117,6 +117,7 @@ sub _decode_value ($) {
 } # _decode_value
 
 sub _decode ($) {
+  return undef unless defined $_[0];
   $_[0] =~ /\G[\x09\x0A\x0D\x20]+/gc;
   my $result = _decode_value $_[0];
   $_[0] =~ /\G[\x09\x0A\x0D\x20]+/gc;
@@ -127,16 +128,17 @@ sub _decode ($) {
 push @EXPORT, qw(json_bytes2perl);
 sub json_bytes2perl ($) {
   local $@;
-  return eval { _decode Encode::decode 'utf-8', $_[0] };
+  return scalar eval { _decode $_[0] } if $_[0] =~ /[^\x00-\xFF]/;
+  return scalar eval { _decode Encode::decode 'utf-8', $_[0] };
 } # json_bytes2perl
 
 push @EXPORT, qw(json_chars2perl);
 sub json_chars2perl ($) {
   local $@;
-  return eval { _decode $_[0] };
+  return scalar eval { _decode $_[0] };
 } # json_chars2perl
 
-my $StringNonSafe = qr/[\x00-\x1F\x22\x5C\x2B\x3C\x7F-\x9F\x{D800}-\x{DFFF}\x{FDD0}-\x{FDEF}\x{FFFE}-\x{FFFF}\x{1FFFE}-\x{1FFFF}\x{2FFFE}-\x{2FFFF}\x{3FFFE}-\x{3FFFF}\x{4FFFE}-\x{4FFFF}\x{5FFFE}-\x{5FFFF}\x{6FFFE}-\x{6FFFF}\x{7FFFE}-\x{7FFFF}\x{8FFFE}-\x{8FFFF}\x{9FFFE}-\x{9FFFF}\x{AFFFE}-\x{AFFFF}\x{BFFFE}-\x{BFFFF}\x{CFFFE}-\x{CFFFF}\x{DFFFE}-\x{DFFFF}\x{EFFFE}-\x{EFFFF}\x{FFFFE}-\x{FFFFF}\x{10FFFE}-\x{10FFFF}]/;
+my $StringNonSafe = qr/[\x00-\x1F\x22\x5C\x2B\x3C\x7F-\x9F\x{2028}\x{2029}\x{D800}-\x{DFFF}\x{FDD0}-\x{FDEF}\x{FFFE}-\x{FFFF}\x{1FFFE}-\x{1FFFF}\x{2FFFE}-\x{2FFFF}\x{3FFFE}-\x{3FFFF}\x{4FFFE}-\x{4FFFF}\x{5FFFE}-\x{5FFFF}\x{6FFFE}-\x{6FFFF}\x{7FFFE}-\x{7FFFF}\x{8FFFE}-\x{8FFFF}\x{9FFFE}-\x{9FFFF}\x{AFFFE}-\x{AFFFF}\x{BFFFE}-\x{BFFFF}\x{CFFFE}-\x{CFFFF}\x{DFFFE}-\x{DFFFF}\x{EFFFE}-\x{EFFFF}\x{FFFFE}-\x{FFFFF}\x{10FFFE}-\x{10FFFF}]/;
 
 our $Symbols = {
   LBRACE => '{',
@@ -216,25 +218,30 @@ sub _encode_value ($$) {
 
 push @EXPORT, qw(perl2json_bytes);
 sub perl2json_bytes ($) {
-  return Encode::encode 'utf-8', join '', _encode_value $_[0], '';
+  return scalar Encode::encode 'utf-8', join '', _encode_value $_[0], '';
 } # perl2json_bytes
 
 push @EXPORT, qw(perl2json_chars);
 sub perl2json_chars ($) {
-  return join '', _encode_value $_[0], '';
+  return scalar join '', _encode_value $_[0], '';
 } # perl2json_chars
 
 push @EXPORT, qw(perl2json_bytes_for_record);
 sub perl2json_bytes_for_record ($) {
   local $Symbols = $PrettySymbols;
-  return Encode::encode 'utf-8', join '', _encode_value ($_[0], ''), "\x0A";
+  return scalar Encode::encode 'utf-8', join '', _encode_value ($_[0], ''), "\x0A";
 } # perl2json_bytes_for_record
 
 push @EXPORT, qw(perl2json_chars_for_record);
 sub perl2json_chars_for_record ($) {
   local $Symbols = $PrettySymbols;
-  return join '', _encode_value ($_[0], ''), "\x0A";
+  return scalar join '', _encode_value ($_[0], ''), "\x0A";
 } # perl2json_chars_for_record
+
+#push @EXPORT_OK, qw(file2perl);
+sub file2perl ($) {
+  return json_chars2perl Encode::decode 'utf-8', scalar $_[0]->slurp;
+} # file2perl
 
 1;
 
