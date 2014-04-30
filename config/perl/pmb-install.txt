@@ -4,7 +4,7 @@ AnyEvent~7.07
 Term::ANSIColor~4.03
 File::Spec~3.40
 Data::Dumper~2.151
-Encode~2.59
+Encode~2.60
 Carp~1.3301
 Text::Diff~1.41
 Test::More~1.001003
