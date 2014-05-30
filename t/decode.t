@@ -75,6 +75,39 @@ for my $test (
   } n => 1;
 }
 
+test {
+  my $c = shift;
+  my @error;
+  local $JSON::PS::OnError = sub {
+    push @error, $_[0];
+  };
+  eq_or_diff json_bytes2perl q{"aaa}, undef;
+  eq_or_diff \@error, [{type => 'json:bad string', index => 4}];
+  done $c;
+} n => 2, name => 'json_bytes2perl OnError';
+
+test {
+  my $c = shift;
+  my @error;
+  local $JSON::PS::OnError = sub {
+    push @error, $_[0];
+  };
+  eq_or_diff json_bytes2perl q{"aaa\x{4000}}, undef;
+  eq_or_diff \@error, [{type => 'json:bad string', index => 4}];
+  done $c;
+} n => 2, name => 'json_bytes2perl OnError';
+
+test {
+  my $c = shift;
+  my @error;
+  local $JSON::PS::OnError = sub {
+    push @error, $_[0];
+  };
+  eq_or_diff json_chars2perl q[{"aaa",], undef;
+  eq_or_diff \@error, [{type => 'json:bad object nv sep', index => 6}];
+  done $c;
+} n => 2, name => 'json_bytes2perl OnError';
+
 run_tests;
 
 =head1 LICENSE

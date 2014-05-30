@@ -3,7 +3,7 @@ use strict;
 use warnings;
 no warnings 'utf8';
 use warnings FATAL => 'recursion';
-our $VERSION = '1.0';
+our $VERSION = '2.0';
 use B;
 use Carp;
 use Encode ();
@@ -20,6 +20,18 @@ sub import ($;@) {
     *{$to_class . '::' . $_} = $code;
   }
 } # import
+
+our $OnError ||= sub {
+  warn sprintf "%s at index %d\n", $_[0]->{type}, $_[0]->{index} || 0;
+}; # $OnError
+
+my $_OnError = sub {
+  if (ref $_[0]) {
+    $OnError->($_[0]);
+  } else {
+    $OnError->(type => $_[0]);
+  }
+}; # $_OnError
 
 my $EscapeToChar = {
   '"' => q<">,
@@ -130,14 +142,23 @@ sub _decode ($) {
 push @EXPORT, qw(json_bytes2perl);
 sub json_bytes2perl ($) {
   local $@;
-  return scalar eval { _decode $_[0] } if $_[0] =~ /[^\x00-\xFF]/;
-  return scalar eval { _decode Encode::decode 'utf-8', $_[0] };
+  if ($_[0] =~ /[^\x00-\xFF]/) {
+    my $value = scalar eval { _decode $_[0] };
+    $_OnError->($@) if $@;
+    return $value;
+  } else {
+    my $value = scalar eval { _decode Encode::decode 'utf-8', $_[0] };
+    $_OnError->($@) if $@;
+    return $value;
+  }
 } # json_bytes2perl
 
 push @EXPORT, qw(json_chars2perl);
 sub json_chars2perl ($) {
   local $@;
-  return scalar eval { _decode $_[0] };
+  my $value = scalar eval { _decode $_[0] };
+  $_OnError->($@) if $@;
+  return $value;
 } # json_chars2perl
 
 my $StringNonSafe = qr/[\x00-\x1F\x22\x5C\x2B\x3C\x7F-\x9F\x{2028}\x{2029}\x{D800}-\x{DFFF}\x{FDD0}-\x{FDEF}\x{FFFE}-\x{FFFF}\x{1FFFE}-\x{1FFFF}\x{2FFFE}-\x{2FFFF}\x{3FFFE}-\x{3FFFF}\x{4FFFE}-\x{4FFFF}\x{5FFFE}-\x{5FFFF}\x{6FFFE}-\x{6FFFF}\x{7FFFE}-\x{7FFFF}\x{8FFFE}-\x{8FFFF}\x{9FFFE}-\x{9FFFF}\x{AFFFE}-\x{AFFFF}\x{BFFFE}-\x{BFFFF}\x{CFFFE}-\x{CFFFF}\x{DFFFE}-\x{DFFFF}\x{EFFFE}-\x{EFFFF}\x{FFFFE}-\x{FFFFF}\x{10FFFE}-\x{10FFFF}]/;

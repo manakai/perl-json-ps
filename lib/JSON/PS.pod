@@ -69,6 +69,17 @@ L<Path::Tiny> representing the file.
 
 =back
 
+=head1 ERROR HANDLING
+
+By default, JSON parse errors are C<warn>ed.  This behavior can be
+replaced by setting an error handler to the global variable
+C<$JSON::PS::OnError>.
+
+The error handler is invoked with a hash reference as the argument.
+See
+<https://github.com/manakai/data-errors/blob/master/doc/onerror.txt>
+for details of values available from the hash reference.
+
 =head1 SPECIFICATION
 
 =over 4
@@ -160,6 +171,12 @@ L<Carp>, and L<Encode> (all of them are core modules).
 
 Tests require some more modules, but they are not required by the
 module itself.
+
+=head1 INSTALL
+
+Just copy the C<lib/JSON/PS.pm> file into an appropriate directory, or
+add <git://github.com/wakaba/perl-json-ps> as a Git submodule of the
+Git repository of your application.
 
 =head1 DEVELOPMENT
 
