@@ -4,7 +4,7 @@ AnyEvent~7.07
 Term::ANSIColor~4.03
 Capture::Tiny~0.25
 File::Spec~3.47
-Data::Dumper~2.151
+Data::Dumper~2.154
 Encode~2.62
 Carp~1.3301
 Test::More~1.001006
@@ -12,4 +12,4 @@ Text::Diff~1.41
 Filter::Util::Call~1.49
 Test::Differences~0.62
 Algorithm::Diff~1.1902
-Path::Tiny~0.056
+Path::Tiny~0.057
