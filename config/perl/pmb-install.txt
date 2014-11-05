@@ -2,7 +2,7 @@ Scalar::Util~1.41
 parent~0.228
 AnyEvent~7.07
 Term::ANSIColor~4.03
-Capture::Tiny~0.25
+Capture::Tiny~0.27
 File::Spec~3.47
 Data::Dumper~2.154
 Encode~2.64
@@ -12,4 +12,4 @@ Text::Diff~1.41
 Filter::Util::Call~1.49
 Test::Differences~0.62
 Algorithm::Diff~1.1902
-Path::Tiny~0.059
+Path::Tiny~0.060
