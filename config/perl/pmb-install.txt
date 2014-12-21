@@ -7,9 +7,9 @@ File::Spec~3.47
 Data::Dumper~2.154
 Encode~2.67
 Carp~1.3301
-Test::More~1.001010
+Test::More~1.001011
 Text::Diff~1.41
-Filter::Util::Call~1.52
+Filter::Util::Call~1.53
 Test::Differences~0.63
 Algorithm::Diff~1.1903
 Path::Tiny~0.061
