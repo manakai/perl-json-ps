@@ -8,7 +8,7 @@ Data::Dumper~2.154
 Encode~2.76
 Carp~1.36
 Test::More~1.001014
-Text::Diff~1.41
+Text::Diff~1.43
 Filter::Util::Call~1.55
 Test::Differences~0.63
 Algorithm::Diff~1.1903
