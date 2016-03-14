@@ -197,7 +197,9 @@ test {
 
 test {
   my $c = shift;
-  is perl2json_chars({qw/a b c/, "\x{3000}"}), qq'{"c":"\x{3000}","a":"b"}';
+  my $actual = perl2json_chars({qw/a b c/, "\x{3000}"});
+  ok $actual eq qq'{"c":"\x{3000}","a":"b"}' ||
+     $actual eq qq'{"a":"b","c":"\x{3000}"}';
   done $c;
 } n => 1;
 
@@ -351,8 +353,9 @@ test {
 
 test {
   my $c = shift;
-  eq_or_diff perl2json_bytes({qw/a b c/, "\x{3000}\x{D800}"}),
-      qq{{"c":"\xe3\x80\x80\\uD800","a":"b"}};
+  my $actual = perl2json_bytes({qw/a b c/, "\x{3000}\x{D800}"});
+  ok $actual eq qq{{"c":"\xe3\x80\x80\\uD800","a":"b"}} ||
+     $actual eq qq{{"a":"b","c":"\xe3\x80\x80\\uD800"}};
   done $c;
 } n => 1;
 
