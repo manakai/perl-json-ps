@@ -211,8 +211,9 @@ test {
 
 test {
   my $c = shift;
-  is perl2json_chars({qw/a b c/, "\x{3000}\x{D800}"}),
-      qq{{"c":"\x{3000}\\uD800","a":"b"}};
+  my $got = perl2json_chars({qw/a b c/, "\x{3000}\x{D800}"});
+  ok $got eq qq{{"c":"\x{3000}\\uD800","a":"b"}} ||
+     $got eq qq{{"a":"b","c":"\x{3000}\\uD800"}};
   done $c;
 } n => 1;
 
@@ -340,8 +341,9 @@ test {
 
 test {
   my $c = shift;
-  is perl2json_bytes({qw/a b c/, "\x{3000}"}),
-      encode 'utf8', qq'{"c":"\x{3000}","a":"b"}';
+  my $got = perl2json_bytes({qw/a b c/, "\x{3000}"});
+  ok $got eq encode 'utf8', qq'{"c":"\x{3000}","a":"b"}' ||
+     $got eq encode 'utf8', qq'{"a":"b","c":"\x{3000}"}';
   done $c;
 } n => 1;
 
@@ -497,7 +499,7 @@ run_tests;
 
 Copyright 2009-2011 Hatena <http://www.hatena.ne.jp/>.
 
-Copyright 2012-2014 Wakaba <wakaba@suikawiki.org>.
+Copyright 2012-2016 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
