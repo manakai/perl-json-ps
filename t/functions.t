@@ -342,8 +342,8 @@ test {
 test {
   my $c = shift;
   my $got = perl2json_bytes({qw/a b c/, "\x{3000}"});
-  ok $got eq encode 'utf8', qq'{"c":"\x{3000}","a":"b"}' ||
-     $got eq encode 'utf8', qq'{"a":"b","c":"\x{3000}"}';
+  ok $got eq (encode 'utf8', qq'{"c":"\x{3000}","a":"b"}') ||
+     $got eq (encode 'utf8', qq'{"a":"b","c":"\x{3000}"}');
   done $c;
 } n => 1;
 
