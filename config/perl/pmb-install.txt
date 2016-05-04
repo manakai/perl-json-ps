@@ -11,4 +11,4 @@ Text::Diff~1.44
 Filter::Util::Call~1.55
 Test::Differences~0.64
 Algorithm::Diff~1.1903
-Path::Tiny~0.088
+Path::Tiny~0.090
