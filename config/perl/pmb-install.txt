@@ -3,7 +3,7 @@ parent~0.234
 AnyEvent~7.12
 Term::ANSIColor~4.05
 Capture::Tiny~0.42
-Data::Dumper~2.160
+Data::Dumper~2.161
 Encode~2.84
 Carp~1.38
 Test::More~1.302040
