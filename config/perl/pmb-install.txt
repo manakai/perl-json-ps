@@ -6,7 +6,7 @@ Capture::Tiny~0.42
 Data::Dumper~2.161
 Encode~2.84
 Carp~1.38
-Test::More~1.302040
+Test::More~1.302045
 Text::Diff~1.44
 Filter::Util::Call~1.55
 Test::Differences~0.64
