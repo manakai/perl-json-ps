@@ -52,23 +52,6 @@ return the result.
 
 =back
 
-In addition, following function can be exported by explicitly
-specifying the name to the argument to the C<use> statement:
-
-=over 4
-
-=item $perl = file2perl $slurpable
-
-Decode the content of the specified file as a UTF-8 encoded JSON byte
-sequence and return the Perl data structure corresponding to it.
-Throw if it can't open the file and retrieve the content.  Return
-C<undef> if JSON decoding failed.
-
-The argument must be an instance of L<Path::Class::File> or
-L<Path::Tiny> representing the file.
-
-=back
-
 =head1 ERROR HANDLING
 
 By default, JSON parse errors are C<warn>ed.  This behavior can be
