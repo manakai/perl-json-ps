@@ -87,7 +87,7 @@ for details of values available from the hash reference.
 =item JSON
 
 ECMA-404 The JSON Data Interchange Format
-<http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf>.
+<https://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf>.
 
 =back
 
@@ -136,6 +136,20 @@ considered as significant upon serialization.
 Perl array references are mapped to JSON arrays.  Perl array items are
 used as JSON array items.
 
+A Perl scalar reference referencing a Perl scalar value C<1> (a string
+or a number) is mapped to JSON C<true>.
+
+A Perl scalar reference referencing a Perl scalar value C<0> (a string
+or a number) is mapped to JSON C<false>.
+
+If the L<Types::Serialiser> module is loaded, any Perl reference value
+C<Types::Serialiser::is_true> would return true is mapped to JSON
+C<true>.
+
+If the L<Types::Serialiser> module is loaded, any Perl reference value
+C<Types::Serialiser::is_false> would return true is mapped to JSON
+C<false>.
+
 Any other Perl scalar value is mapped to JSON number or string.  If
 the value has numeric value and is not C<inf>, C<-inf>, or C<nan>, it
 is mapped to equivalent JSON number.  Otherwise, it is mapped to
@@ -144,13 +158,16 @@ U+10FFFF, the JSON string also contains the character (which is
 non-conforming).  If the output is a byte string, however, the
 character is converted to U+FFFD when it is converted to bytes.
 
+  For example, the following code generates a JSON array with
+  a string and a number:
+
+    print perl2json_bytes [ "" . 12345 , 0 + "10.1" ]; # ["12345",10.1]
+
 It prefers code point escapes to one-character escapes, which is
 different from ECMAScript's C<JSON.stringify>.  It escapes more
 characters than ECMAScript: C<">, C<\> C<+>, C<< < >>, C0 and C1
 control characters, C<DELETE>, U+2028, U+2029, noncharacter code
 points, and surrogate code points.
-
-There is no way to generate JSON C<true> or C<false>.
 
 =head1 COMPARISON WITH SIMILAR MODULES
 
@@ -175,7 +192,7 @@ module itself.
 =head1 INSTALL
 
 Just copy the C<lib/JSON/PS.pm> file into an appropriate directory, or
-add <git://github.com/wakaba/perl-json-ps> as a Git submodule of the
+add <https://github.com/wakaba/perl-json-ps> as a Git submodule of the
 Git repository of your application.
 
 =head1 DEVELOPMENT
@@ -184,7 +201,7 @@ Latest version of the module is available in the Git repository
 <https://github.com/wakaba/perl-json-ps>.
 
 You should add the Git repository as a submodule of the Git repository
-of your application, or copy the module file
+of your application, or copy the Perl module file
 <https://raw.githubusercontent.com/wakaba/perl-json-ps/master/lib/JSON/PS.pm>.
 
 Tests are run at Travis CI:
@@ -196,7 +213,7 @@ Wakaba <wakaba@suikawiki.org>.
 
 =head1 LICENSE
 
-Copyright 2014 Wakaba <wakaba@suikawiki.org>.
+Copyright 2014-2017 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

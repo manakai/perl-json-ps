@@ -3,7 +3,7 @@ use strict;
 use warnings;
 no warnings 'utf8';
 use warnings FATAL => 'recursion';
-our $VERSION = '2.0';
+our $VERSION = '3.0';
 use B;
 use Carp;
 use Encode ();
@@ -226,7 +226,25 @@ sub _encode_value ($$) {
         $v[-1] = $Symbols->{last} if @v;
         return $Symbols->{LBRACE}, @v, $_[1], $Symbols->{RBRACE};
       }
-    }
+
+      if ($ref eq 'SCALAR') {
+        if (defined ${$_[0]} and not ref ${$_[0]}) {
+          if (${$_[0]} eq '1') {
+            return 'true';
+          } elsif (${$_[0]} eq '0') {
+            return 'false';
+          }
+        }
+      } else {
+        if (Types::Serialiser->can ('is_bool')) {
+          if (Types::Serialiser::is_true ($_[0])) {
+            return 'true';
+          } elsif (Types::Serialiser::is_false ($_[0])) {
+            return 'false';
+          }
+        }
+      }
+    } # $ref
 
     my $f = B::svref_2object (\($_[0]))->FLAGS;
     if ($f & (B::SVp_IOK | B::SVp_NOK) && $_[0] * 0 == 0) {
@@ -279,6 +297,7 @@ sub perl2json_chars_for_record ($) {
   return scalar join '', _encode_value ($_[0], ''), "\x0A";
 } # perl2json_chars_for_record
 
+## Deprecated
 #push @EXPORT_OK, qw(file2perl);
 sub file2perl ($) {
   return json_chars2perl Encode::decode 'utf-8', scalar $_[0]->slurp;
@@ -288,7 +307,7 @@ sub file2perl ($) {
 
 =head1 LICENSE
 
-Copyright 2014 Wakaba <wakaba@suikawiki.org>.
+Copyright 2014-2017 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

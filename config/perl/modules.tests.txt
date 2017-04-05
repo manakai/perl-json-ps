@@ -1,3 +1,4 @@
 Test::More
 Test::Differences
+Types::Serialiser
 Path::Tiny

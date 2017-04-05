@@ -12,6 +12,13 @@ sub u8 ($) { encode 'utf8', $_[0] }
 for my $test (
   [undef, 'null'],
 
+  [\1, 'true'],
+  [\0, 'false'],
+  [\'1', 'true'],
+  [\'0', 'false'],
+  [[\1], '[true]'],
+  [[\0], '[false]'],
+
   [12.555, '12.555'],
   [-12.555, '-12.555'],
   [10000000000000003200000033, '1e+25'],
@@ -159,7 +166,7 @@ run_tests;
 
 =head1 LICENSE
 
-Copyright 2014 Wakaba <wakaba@suikawiki.org>.
+Copyright 2014-2017 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
