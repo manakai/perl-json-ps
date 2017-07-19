@@ -2,13 +2,13 @@ Algorithm::Diff~1.1903
 AnyEvent~7.14
 Capture::Tiny~0.46
 Carp~1.38
-Encode~2.91
+Encode~2.92
 Filter::Util::Call~1.57
 Path::Tiny~0.104
 Scalar::Util~1.48
 Term::ANSIColor~4.06
+Test::Builder~1.302086
 Test::Differences~0.64
-Test::More~1.302086
 Text::Diff~1.44
 Types::Serialiser~1.0
 common::sense~3.74
