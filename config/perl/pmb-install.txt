@@ -3,7 +3,7 @@ AnyEvent~7.14
 Capture::Tiny~0.48
 Carp~1.38
 Encode~2.98
-Filter::Util::Call~1.58
+Filter::Util::Call~1.59
 Path::Tiny~0.108
 Scalar::Util~1.50
 Term::ANSIColor~4.06
