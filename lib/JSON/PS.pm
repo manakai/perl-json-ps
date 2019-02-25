@@ -6,7 +6,12 @@ use warnings FATAL => 'recursion';
 our $VERSION = '3.0';
 use B;
 use Carp;
+
 use Encode ();
+BEGIN {
+  *_du = sub { return scalar Encode::decode 'utf-8', $_[0] };
+  *_eu = sub { return scalar Encode::encode 'utf-8', $_[0] };
+}
 
 our @EXPORT;
 
@@ -147,7 +152,7 @@ sub json_bytes2perl ($) {
     $_OnError->($@) if $@;
     return $value;
   } else {
-    my $value = scalar eval { _decode Encode::decode 'utf-8', $_[0] };
+    my $value = scalar eval { _decode _du $_[0] };
     $_OnError->($@) if $@;
     return $value;
   }
@@ -277,7 +282,7 @@ sub _encode_value ($$) {
 
 push @EXPORT, qw(perl2json_bytes);
 sub perl2json_bytes ($) {
-  return scalar Encode::encode 'utf-8', join '', _encode_value $_[0], '';
+  return _eu join '', _encode_value $_[0], '';
 } # perl2json_bytes
 
 push @EXPORT, qw(perl2json_chars);
@@ -288,7 +293,7 @@ sub perl2json_chars ($) {
 push @EXPORT, qw(perl2json_bytes_for_record);
 sub perl2json_bytes_for_record ($) {
   local $Symbols = $PrettySymbols;
-  return scalar Encode::encode 'utf-8', join '', _encode_value ($_[0], ''), "\x0A";
+  return _eu join '', _encode_value ($_[0], ''), "\x0A";
 } # perl2json_bytes_for_record
 
 push @EXPORT, qw(perl2json_chars_for_record);
@@ -300,14 +305,14 @@ sub perl2json_chars_for_record ($) {
 ## Deprecated
 #push @EXPORT_OK, qw(file2perl);
 sub file2perl ($) {
-  return json_chars2perl Encode::decode 'utf-8', scalar $_[0]->slurp;
+  return json_chars2perl _du scalar $_[0]->slurp;
 } # file2perl
 
 1;
 
 =head1 LICENSE
 
-Copyright 2014-2017 Wakaba <wakaba@suikawiki.org>.
+Copyright 2014-2019 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
