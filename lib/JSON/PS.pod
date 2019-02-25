@@ -166,8 +166,14 @@ API wrapper for L<JSON::XS>.
 
 =head1 DEPENDENCY
 
-The module requires Perl 5.8 or later.  It also requires L<B>,
-L<Carp>, and L<Encode> (all of them are core modules).
+The module requires Perl 5.8 or later.  It also requires L<B> and
+L<Carp> (both are Perl core modules).
+
+In addition, it requires perl-web-encodings
+<https://github.com/manakai/perl-web-encodings> modules.  For backward
+compatibility, if they are not available, it fallbacks to L<Encode> (a
+Perl core module); however this is not recommended, as it is not
+always compatible with the Encoding Standard.
 
 Tests require some more modules, but they are not required by the
 module itself.
@@ -196,7 +202,7 @@ Wakaba <wakaba@suikawiki.org>.
 
 =head1 LICENSE
 
-Copyright 2014-2017 Wakaba <wakaba@suikawiki.org>.
+Copyright 2014-2019 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

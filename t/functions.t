@@ -7,10 +7,10 @@ use Test::X1;
 use Test::More;
 use Test::Differences;
 use JSON::PS;
-use Encode;
+use Web::Encoding;
 
 sub u8 ($) {
-  return encode 'utf-8', $_[0];
+  return encode_web_utf8 $_[0];
 } # u8
 
 # ------ json_chars2perl ------
@@ -73,7 +73,7 @@ test {
 
 test {
   my $c = shift;
-  is_deeply json_bytes2perl('{"a":"b","c": "'.(encode 'utf8', "\x{3000}").'"}'), {qw/a b c/, "\x{3000}"};
+  is_deeply json_bytes2perl('{"a":"b","c": "'.(u8 "\x{3000}").'"}'), {qw/a b c/, "\x{3000}"};
   done $c;
 } n => 1;
 
@@ -182,7 +182,7 @@ test {
 
 test {
   my $c = shift;
-  eq_or_diff json_bytes2perl(encode 'utf-8', qq{{"\x{2028}":"\x{2029}"}}),
+  eq_or_diff json_bytes2perl(u8 qq{{"\x{2028}":"\x{2029}"}}),
       {"\x{2028}" => "\x{2029}"};
   done $c;
 } n => 1;
@@ -342,8 +342,8 @@ test {
 test {
   my $c = shift;
   my $got = perl2json_bytes({qw/a b c/, "\x{3000}"});
-  ok $got eq (encode 'utf8', qq'{"c":"\x{3000}","a":"b"}') ||
-     $got eq (encode 'utf8', qq'{"a":"b","c":"\x{3000}"}');
+  ok $got eq (u8 qq'{"c":"\x{3000}","a":"b"}') ||
+     $got eq (u8 qq'{"a":"b","c":"\x{3000}"}');
   done $c;
 } n => 1;
 
@@ -429,7 +429,7 @@ test {
 test {
   my $c = shift;
   eq_or_diff perl2json_bytes_for_record({qw/a b c/, "\x{3000}"}),
-        encode 'utf8', qq'{
+        u8 qq'{
    "a" : "b",
    "c" : "\x{3000}"
 }
@@ -499,7 +499,7 @@ run_tests;
 
 Copyright 2009-2011 Hatena <http://www.hatena.ne.jp/>.
 
-Copyright 2012-2016 Wakaba <wakaba@suikawiki.org>.
+Copyright 2012-2019 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

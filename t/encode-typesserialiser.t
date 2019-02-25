@@ -3,12 +3,12 @@ use warnings;
 use Path::Tiny;
 use lib glob path (__FILE__)->parent->parent->child ('t_deps/modules/*/lib');
 use JSON::PS;
-use Encode;
 use Test::X1;
 use Test::Differences;
 use Types::Serialiser;
+use Web::Encoding;
 
-sub u8 ($) { encode 'utf8', $_[0] }
+sub u8 ($) { encode_web_utf8 $_[0] }
 
 for my $test (
   [Types::Serialiser::true, 'true'],

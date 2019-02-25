@@ -3,14 +3,19 @@ use strict;
 use warnings;
 no warnings 'utf8';
 use warnings FATAL => 'recursion';
-our $VERSION = '3.0';
+our $VERSION = '4.0';
 use B;
 use Carp;
 
-use Encode ();
 BEGIN {
-  *_du = sub { return scalar Encode::decode 'utf-8', $_[0] };
-  *_eu = sub { return scalar Encode::encode 'utf-8', $_[0] };
+  if (eval q{ use Web::Encoding (); 1 }) {
+    *_du = \&Web::Encoding::decode_web_utf8;
+    *_eu = \&Web::Encoding::encode_web_utf8;
+  } else {
+    require Encode;
+    *_du = sub { return scalar Encode::decode ('utf-8', $_[0]) };
+    *_eu = sub { return scalar Encode::encode ('utf-8', $_[0]) };
+  }
 }
 
 our @EXPORT;
