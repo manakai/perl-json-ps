@@ -108,11 +108,19 @@ test {
   done $c;
 } n => 2, name => 'json_bytes2perl OnError';
 
+test {
+  my $c = shift;
+  qq{["abc\xe4\xb8\x80"]} =~ /(\[.+\])/;
+  my $decoded = json_bytes2perl $1;
+  eq_or_diff $decoded, ["abc\x{4e00}"];
+  done $c;
+} n => 1, name => 'json_bytes2perl $1';
+
 run_tests;
 
 =head1 LICENSE
 
-Copyright 2014 Wakaba <wakaba@suikawiki.org>.
+Copyright 2014-2019 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
