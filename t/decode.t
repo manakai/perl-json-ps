@@ -110,6 +110,16 @@ test {
 
 test {
   my $c = shift;
+  my $x = qq{["abc\x{4e00}"]};
+  $x =~ s/[^\x00-\x7F]//g;
+  eq_or_diff !!utf8::is_utf8 ($x), !!1, 'assert: utf8-flagged';
+  my $decoded = json_bytes2perl $x;
+  eq_or_diff $decoded, ["abc"];
+  done $c;
+} n => 2, name => 'json_bytes2perl utf8 flagged';
+
+test {
+  my $c = shift;
   qq{["abc\xe4\xb8\x80"]} =~ /(\[.+\])/;
   my $decoded = json_bytes2perl $1;
   eq_or_diff $decoded, ["abc\x{4e00}"];

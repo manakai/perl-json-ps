@@ -36,10 +36,10 @@ our $OnError ||= sub {
 }; # $OnError
 
 my $_OnError = sub {
-  if (ref $_[0]) {
+  if (ref $_[0] eq 'HASH') {
     $OnError->($_[0]);
   } else {
-    $OnError->(type => $_[0]);
+    $OnError->({type => $_[0]});
   }
 }; # $_OnError
 
@@ -152,7 +152,7 @@ sub _decode ($) {
 push @EXPORT, qw(json_bytes2perl);
 sub json_bytes2perl ($) {
   local $@;
-  if ($_[0] =~ /[^\x00-\xFF]/) {
+  if (utf8::is_utf8 ($_[0])) {
     my $value = scalar eval { _decode $_[0] };
     $_OnError->($@) if $@;
     return $value;
