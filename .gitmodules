@@ -6,3 +6,6 @@
 	path = modules/web-encodings
 	url = https://github.com/manakai/perl-web-encodings
 	track = master
+[submodule "t_deps/data"]
+	path = t_deps/data
+	url = https://github.com/wakaba/tests-web
