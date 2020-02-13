@@ -30,7 +30,12 @@ for my $test (
   ["-0.33441\x0D\x0D\x0A \x09" => -0.33441],
 
   [q{""} => ''],
+  [q{"0"} => '0'],
+  [q{"0 but true"} => '0 but true'],
   [q{"abc"} => 'abc'],
+  [q{"ab WA t43t3  er<>rr raekpt435()32c"} => 'ab WA t43t3  er<>rr raekpt435()32c'],
+  [q{{"ab WA t43t3  er<>rr raekpt435()32c":1}} => {'ab WA t43t3  er<>rr raekpt435()32c'=>1}],
+  [q{["ab WA t43t3  er<>rr raekpt435()32c"]} => ['ab WA t43t3  er<>rr raekpt435()32c']],
   [qq{" \\t"} => " \x09"],
   [qq{" \\t\\u4E00\\u2fFe"} => " \x09\x{4E00}\x{2FFE}"],
   [qq{" \\t\\u4E00\\uFFFF\\uD800"} => " \x09\x{4E00}\x{FFFF}\x{D800}"],
@@ -54,6 +59,8 @@ for my $test (
 
   [q{{}} => {}],
   [q{{  }} => {}],
+  [q{{"":true}} => {'' => 1}],
+  [q{{"0":true}} => {'0' => 1}],
   [q{{"abc":true}} => {abc => 1}],
   [q{{"abc":true,"Abc":124.4}} => {abc => 1, Abc => 124.4}],
   [q{{"abc":true,"Abc":124.4,"abc":"x"}} => {abc => "x", Abc => 124.4}],

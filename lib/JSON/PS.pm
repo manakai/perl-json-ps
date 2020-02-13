@@ -64,6 +64,8 @@ sub _decode_value ($) {
     return undef;
   } elsif ($_[0] =~ /\G(-?(?>[1-9][0-9]*|0)(?>\.[0-9]+)?(?>[eE][+-]?[0-9]+)?)/gc) {
     return 1*(0+$1);
+  } elsif ($_[0] =~ /\G"([\x20\x21\x23-\x5B\x5D-\x7E]*)"/gc) {
+    return $1;
   } elsif ($_[0] =~ /\G"/gc) {
     my @s;
     while (1) {
@@ -89,8 +91,13 @@ sub _decode_value ($) {
       #
     } else {
       OBJECT: {
-        if ($_[0] =~ /\G(?=\")/gc) {
-          my $name = _decode_value $_[0];
+        my $name;
+        if ($_[0] =~ /\G"([\x20\x21\x23-\x5B\x5D-\x7E]*)"/gc) {
+          $name = $1;
+        } elsif ($_[0] =~ /\G(?=\")/gc) {
+          $name = _decode_value $_[0];
+        }
+        if (defined $name) {
           $_[0] =~ /\G[\x09\x0A\x0D\x20]+/gc;
           if ($_[0] =~ /\G:/gc) {
             $_[0] =~ /\G[\x09\x0A\x0D\x20]+/gc;
@@ -152,7 +159,7 @@ sub _decode ($) {
 push @EXPORT, qw(json_bytes2perl);
 sub json_bytes2perl ($) {
   local $@;
-  if (utf8::is_utf8 ($_[0])) {
+  if (utf8::is_utf8 ($_[0])) { # backcompat
     my $value = scalar eval { _decode $_[0] };
     $_OnError->($@) if $@;
     return $value;
