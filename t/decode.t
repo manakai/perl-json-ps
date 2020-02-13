@@ -124,13 +124,23 @@ test {
   my $decoded = json_bytes2perl $1;
   eq_or_diff $decoded, ["abc\x{4e00}"];
   done $c;
-} n => 1, name => 'json_bytes2perl $1';
+} n => 1, name => 'json_bytes2perl $1 (not flagged)';
+## This is required for backward compatibility,
+
+## while this is not.
+#test {
+#  my $c = shift;
+#  qq{["abc\x{4e00}"]} =~ /(\[.+\])/;
+#  my $decoded = json_bytes2perl $1;
+#  eq_or_diff $decoded, ["abc\x{4e00}"];
+#  done $c;
+#} n => 1, name => 'json_bytes2perl $1 (flagged)';
 
 run_tests;
 
 =head1 LICENSE
 
-Copyright 2014-2019 Wakaba <wakaba@suikawiki.org>.
+Copyright 2014-2020 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
