@@ -5,6 +5,7 @@ use lib glob path (__FILE__)->parent->parent->child ('t_deps', 'modules', '*', '
 use Test::X1;
 use Test::More;
 use JSON::PS;
+use Web::Encoding;
 
 my $data_path = path (__FILE__)->parent->parent->child ('t_deps/data/largedata');
 for (qw(
@@ -21,8 +22,12 @@ for (qw(
     my $obj2 = json_bytes2perl $bytes2;
     my $bytes3 = perl2json_bytes_for_record $obj2;
     is $bytes3, $bytes2;
+
+    my $obj3 = json_chars2perl decode_web_utf8 $bytes;
+    my $bytes4 = perl2json_bytes_for_record $obj3;
+    is $bytes3, $bytes4;
     done $c;
-  } n => 1, name => ['reencode', $path];
+  } n => 2, name => ['reencode', $path];
 }
 
 run_tests;
