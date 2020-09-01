@@ -56,16 +56,10 @@ my $EscapeToChar = {
 
 sub _decode_value ($);
 sub _decode_value ($) {
-  if ($_[0] =~ /\Gtrue/gc) {
-    return 1;
-  } elsif ($_[0] =~ /\Gfalse/gc) {
-    return 0;
-  } elsif ($_[0] =~ /\Gnull/gc) {
-    return undef;
+  if ($_[0] =~ /\G"([\x20\x21\x23-\x5B\x5D-\x7E]*)"/gc) {
+    return $1;
   } elsif ($_[0] =~ /\G(-?(?>[1-9][0-9]*|0)(?>\.[0-9]+)?(?>[eE][+-]?[0-9]+)?)/gc) {
     return 1*(0+$1);
-  } elsif ($_[0] =~ /\G"([\x20\x21\x23-\x5B\x5D-\x7E]*)"/gc) {
-    return $1;
   } elsif ($_[0] =~ /\G"/gc) {
     my @s;
     while (1) {
@@ -141,6 +135,12 @@ sub _decode_value ($) {
       } # ARRAY
     }
     return \@item;
+  } elsif ($_[0] =~ /\Gtrue/gc) {
+    return 1;
+  } elsif ($_[0] =~ /\Gfalse/gc) {
+    return 0;
+  } elsif ($_[0] =~ /\Gnull/gc) {
+    return undef;
   } else {
     die {index => pos $_[0], type => 'json:bad value'};
   }
