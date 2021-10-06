@@ -166,7 +166,7 @@ API wrapper for L<JSON::XS>.
 
 =head1 DEPENDENCY
 
-The module requires Perl 5.10 or later.  It also requires L<B> and
+The module requires Perl 5.14 or later.  It also requires L<B> and
 L<Carp> (both are Perl core modules).
 
 In addition, it requires perl-web-encodings
