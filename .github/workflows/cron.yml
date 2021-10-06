@@ -14,7 +14,7 @@
                "run" : "git config --global user.name \u0022GitHub Actions\u0022"
             },
             {
-              "run": "git config url.https://$GH_ACCESS_TOKEN@github.com/.pushInsteadOf https://github.com/",
+              "run": "git config --global url.https://$GH_ACCESS_TOKEN@github.com/.pushInsteadOf https://github.com/",
               "env": {"GH_ACCESS_TOKEN": "TestGithubAccessToken"}
             },
             {
@@ -36,7 +36,7 @@
    "on" : {
       "schedule" : [
          {
-            "cron" : "40 8 * * *"
+            "cron" : "50 8 * * *"
          }
       ]
    }
