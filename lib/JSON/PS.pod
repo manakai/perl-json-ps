@@ -181,17 +181,27 @@ module itself.
 =head1 INSTALL
 
 Just copy the C<lib/JSON/PS.pm> file into an appropriate directory, or
-add <https://github.com/wakaba/perl-json-ps> as a Git submodule of the
-Git repository of your application.
+add <https://github.com/manakai/perl-json-ps> as a Git submodule of
+the Git repository of your application.
 
 =head1 DEVELOPMENT
 
 Latest version of the module is available in the Git repository
-<https://github.com/wakaba/perl-json-ps>.
+<https://github.com/manakai/perl-json-ps>.
 
 You should add the Git repository as a submodule of the Git repository
 of your application, or copy the Perl module file
-<https://raw.githubusercontent.com/wakaba/perl-json-ps/master/lib/JSON/PS.pm>.
+<https://raw.githubusercontent.com/manakai/perl-json-ps/master/lib/JSON/PS.pm>.
+
+=head1 HISTORY
+
+This module was inspired by L<JSON::Functions::XS>
+<https://github.com/wakaba/perl-json-functions-xs> and other earlier
+JSON implementations.
+
+This repository was located at
+<https://github.com/wakaba/perl-json-ps> until it has been transferred
+to the manakai project on October 6, 2021.
 
 =head1 AUTHOR
 
