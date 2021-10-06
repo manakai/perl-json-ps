@@ -166,7 +166,7 @@ API wrapper for L<JSON::XS>.
 
 =head1 DEPENDENCY
 
-The module requires Perl 5.8 or later.  It also requires L<B> and
+The module requires Perl 5.10 or later.  It also requires L<B> and
 L<Carp> (both are Perl core modules).
 
 In addition, it requires perl-web-encodings
@@ -193,16 +193,13 @@ You should add the Git repository as a submodule of the Git repository
 of your application, or copy the Perl module file
 <https://raw.githubusercontent.com/wakaba/perl-json-ps/master/lib/JSON/PS.pm>.
 
-Tests are run at Travis CI:
-<https://travis-ci.org/wakaba/perl-json-ps>.
-
 =head1 AUTHOR
 
 Wakaba <wakaba@suikawiki.org>.
 
 =head1 LICENSE
 
-Copyright 2014-2019 Wakaba <wakaba@suikawiki.org>.
+Copyright 2014-2021 Wakaba <wakaba@suikawiki.org>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
