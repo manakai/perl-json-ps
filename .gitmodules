@@ -9,3 +9,4 @@
 [submodule "t_deps/data"]
 	path = t_deps/data
 	url = https://github.com/wakaba/tests-web
+	track = master
