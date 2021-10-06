@@ -1,7 +1,7 @@
 {
    "jobs" : {
       "deploy_github_nightly" : {
-         "if" : "${{ github.ref == \u0022refs/heads/nightly\u0022 }}",
+         "if" : "${{ github.ref == 'refs/heads/nightly' }}",
          "need" : [
             "test"
          ],
@@ -19,7 +19,7 @@
          ]
       },
       "deploy_github_staging" : {
-         "if" : "${{ github.ref == \u0022refs/heads/staging\u0022 }}",
+         "if" : "${{ github.ref == 'refs/heads/staging' }}",
          "need" : [
             "test"
          ],
