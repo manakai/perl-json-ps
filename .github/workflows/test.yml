@@ -53,10 +53,10 @@
                      "perl_version" : "latest"
                   },
                   {
-                     "perl_version" : "5.14"
+                     "perl_version" : "5.14.2"
                   },
                   {
-                     "perl_version" : "5.8"
+                     "perl_version" : "5.8.0"
                   }
                ]
             }
