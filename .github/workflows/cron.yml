@@ -2,9 +2,6 @@
    "jobs" : {
       "batch_github_master" : {
          "if" : "${{ github.ref == 'refs/heads/master' }}",
-         "permissions" : {
-            "contents" : "write"
-         },
          "runs-on" : "ubuntu-latest",
          "steps" : [
             {
@@ -15,6 +12,10 @@
             },
             {
                "run" : "git config --global user.name \u0022GitHub Actions\u0022"
+            },
+            {
+              "run": "git config url.https://$GH_ACCESS_TOKEN@github.com/.pushInsteadOf https://github.com/",
+              "env": {"GH_ACCESS_TOKEN": "TestGithubAccessToken"}
             },
             {
                "run" : "make deps"
@@ -35,7 +36,7 @@
    "on" : {
       "schedule" : [
          {
-            "cron" : "45 7 * * *"
+            "cron" : "*/5 8 * * *"
          }
       ]
    }
