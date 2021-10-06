@@ -14,8 +14,8 @@
                "run" : "git config --global user.name \u0022GitHub Actions\u0022"
             },
             {
-              "run": "git config --replace-all url.https://$GH_ACCESS_TOKEN@test.github.com/.pushInsteadOf https://github.com/",
-              "env": {"GH_ACCESS_TOKEN": "TestGithubAccessToken"}
+              "run": "git config --replace-all url.https://$GH_ACCESS_TOKEN@github.com/.pushInsteadOf https://github.com/",
+              "env": {"GH_ACCESS_TOKEN": "${{ secrets.GH_ACCESS_TOKEN }}"}
             },
             {
                "run" : "make deps"
@@ -36,7 +36,7 @@
    "on" : {
       "schedule" : [
          {
-            "cron" : "15 9 * * *"
+            "cron" : "42 9 * * *"
          }
       ]
    }
