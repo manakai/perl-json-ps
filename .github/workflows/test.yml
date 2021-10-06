@@ -2,7 +2,7 @@
    "jobs" : {
       "deploy_github_nightly" : {
          "if" : "${{ github.ref == 'refs/heads/nightly' }}",
-         "need" : [
+         "needs" : [
             "test"
          ],
          "permissions" : {
@@ -20,7 +20,7 @@
       },
       "deploy_github_staging" : {
          "if" : "${{ github.ref == 'refs/heads/staging' }}",
-         "need" : [
+         "needs" : [
             "test"
          ],
          "permissions" : {
