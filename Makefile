@@ -40,3 +40,5 @@ test-deps: deps
 
 test-main:
 	$(PROVE) t/*.t
+
+## License: Public Domain.
